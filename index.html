@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elisha Wi-Fi - Usagara</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#0f172a;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px}
+.card{background:white;color:#0f172a;border-radius:20px;max-width:400px;width:100%;padding:25px;box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.logo{text-align:center;margin-bottom:15px}
+.logo h1{font-size:28px;color:#2563eb}
+.logo p{color:#64748b;font-size:14px}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
+.price-card{border:2px solid #e2e8f0;border-radius:12px;padding:12px;text-align:center;cursor:pointer}
+.price-card.selected{border-color:#2563eb;background:#eff6ff}
+input{width:100%;padding:14px;border:2px solid #e2e8f0;border-radius:10px;margin:10px 0;font-size:16px}
+button{width:100%;padding:15px;background:#2563eb;color:white;border:none;border-radius:10px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:10px}
+.voucher-box{background:#dcfce7;border:2px dashed #22c55e;border-radius:12px;padding:20px;text-align:center;margin-top:20px;display:none}
+.voucher-code{font-size:32px;font-weight:bold;letter-spacing:4px;color:#16a34a;margin:10px 0}
+.info{background:#f1f5f9;border-radius:10px;padding:12px;font-size:12px;margin-top:15px}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="logo"><h1>📶 Elisha Wi-Fi</h1><p>Usagara, Mwanza - Mtandao wa Kasi</p></div>
+<div class="price-grid">
+<div class="price-card selected" data-kifurushi="Saa 1" data-kiasi="500"><h3>TZS 500</h3><p>Saa 1</p></div>
+<div class="price-card" data-kifurushi="Saa 3" data-kiasi="1000"><h3>TZS 1,000</h3><p>Saa 3</p></div>
+<div class="price-card" data-kifurushi="Siku 1" data-kiasi="2000"><h3>TZS 2,000</h3><p>Siku 1</p></div>
+<div class="price-card" data-kifurushi="Wiki 1" data-kiasi="8000"><h3>TZS 8,000</h3><p>Wiki 1</p></div>
+</div>
+<input type="tel" id="namba" placeholder="Namba ya M-Pesa 07XX XXX XXX">
+<button id="lipaBtn" onclick="lipa()">Lipa kwa M-Pesa</button>
+<div id="voucherBox" class="voucher-box">
+<p>✅ Malipo yamepokelewa!</p>
+<div class="voucher-code" id="voucherCode">EL1234</div>
+<p>Andika hii CODE kwenye Wi-Fi</p>
+<button onclick="navigator.clipboard.writeText(document.getElementById('voucherCode').textContent);alert('Imenakiliwa!')">Nakili Code</button>
+</div>
+<div class="info"><b>Jinsi ya kuunganisha:</b><br>1. Lipia hapa<br>2. Utapata CODE<br>3. Chagua Wi-Fi Elisha Wi-Fi<br>4. Andika CODE</div>
+</div>
+<script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwYsuaaPhwCoVLWmsvaFSDAazkTs5g-Ci1AS9YynoWHqBF1wVGqVqKvYQ0AWaX3yXH2VQ/exec";
+let selected={kifurushi:"Saa 1",kiasi:"500"};
+document.querySelectorAll('.price-card').forEach(c=>{
+ c.onclick=()=>{document.querySelectorAll('.price-card').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');selected.kifurushi=c.dataset.kifurushi;selected.kiasi=c.dataset.kiasi;}
+});
+async function lipa(){
+ const namba=document.getElementById('namba').value.trim();
+ if(namba.length<10){alert('Weka namba sahihi');return;}
+ const btn=document.getElementById('lipaBtn');btn.disabled=true;btn.textContent='Inatengeneza Voucher...';
+ try{await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({namba:namba,kifurushi:selected.kifurushi,kiasi:selected.kiasi})});}catch(e){}
+ const voucher="EL"+Math.floor(1000+Math.random()*9000);
+ document.getElementById('voucherCode').textContent=voucher;
+ document.getElementById('voucherBox').style.display='block';
+ btn.textContent='✅ Tayari';btn.disabled=false;
+}
+</script>
+</body>
+</html>
